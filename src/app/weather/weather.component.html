@@ -1,0 +1,69 @@
+<div class="container-fluid">
+    <form [formGroup]="weatherForm" (ngSubmit)="onSearch()">
+        <div class="input-group w-25 mx-auto">
+            <input type="text" name="search" placeholder="Search by city name" class="form-control"
+                formControlName="cityName" (keyup)="checkFormValue(weatherForm.value.cityName)">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">
+                    Search</button>
+            </span>
+        </div>
+        <div *ngIf="!weatherForm.value.cityName && submitted" class="d-flex justify-content-center align-items-center">
+            <p class="text-danger"> Please enter city name..</p>
+        </div>
+    </form>
+    <ng-container *ngIf="currentWeatherData && weatherForm.value.cityName">
+        <div class="row mt-5">
+            <div class="col-12 col-lg-5">
+                <h5> Current weather in {{currentWeatherData?.name}}({{currentWeatherData?.sys?.country}})</h5>
+                <h4 class="badge"> {{currentWeatherData?.main?.temp}} <sup>o</sup>c</h4>
+                <table class="table table-hover table-bordered">
+                    <tbody>
+                        <tr>
+                            <td> Cloudiness </td>
+                            <td *ngFor="let item of currentWeatherData?.weather">{{item.description}}</td>
+                        </tr>
+                        <tr>
+                            <td>Pressure</td>
+                            <td>{{currentWeatherData?.main?.pressure}}</td>
+                        </tr>
+                        <tr>
+                            <td>Humidity</td>
+                            <td>{{currentWeatherData?.main?.humidity}}</td>
+                        </tr>
+                        <tr>
+                            <td>Wind</td>
+                            <td>{{currentWeatherData?.wind?.speed}} m/s</td>
+                        </tr>
+                        <tr>
+                            <td>Sunrise</td>
+                            <td>{{currentWeatherData?.sys?.sunrise | date: 'hh:mm'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Sunset</td>
+                            <td>{{currentWeatherData?.sys?.sunset | date: 'hh:mm'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-12 col-lg-7" *ngIf="hourlyWeatherData && weatherForm.value.cityName">
+                <h5> Hourly weather forecasts in {{currentWeatherData?.name}}({{currentWeatherData?.sys?.country}})</h5>
+                <div *ngFor="let data of hourlyWeatherData">
+                    <h6>{{data.date | date}}</h6>
+                    <table class="table table-hover table-bordered">
+                        <tbody>
+                            <tr *ngFor="let dt of data.list">
+                                <td class="vertical-center">{{dt.dt_txt | date: 'hh:mm'}}</td>
+                                <td><span class="badge">{{dt.main.temp}}<sup>o</sup>c</span>, <span
+                                        *ngFor="let w of dt?.weather">Cloudiness({{w.description}}),</span>
+                                    <p class="mb-0">Wind({{dt.wind.speed}}m/h), Clouds({{dt.clouds.all}}%),
+                                        Pressure({{dt.main.pressure}}hpa), Humidity({{dt.main.humidity}}) </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
